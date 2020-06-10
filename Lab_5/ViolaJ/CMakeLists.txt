@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(ViolaJ)
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(ViolaJ main.cpp)
+target_link_libraries(ViolaJ ${OpenCV_LIBS})

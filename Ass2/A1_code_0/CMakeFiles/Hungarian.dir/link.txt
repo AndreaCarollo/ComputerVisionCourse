@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHungarian.a  CMakeFiles/Hungarian.dir/Hungarian.cpp.o
+/usr/bin/ranlib libHungarian.a

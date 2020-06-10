@@ -1,0 +1,4 @@
+/home/mmlab/workspace/C++/Assignment_2/CMakeFiles/edit_cache.dir
+/home/mmlab/workspace/C++/Assignment_2/CMakeFiles/ASSIGN_2.dir
+/home/mmlab/workspace/C++/Assignment_2/CMakeFiles/rebuild_cache.dir
+/home/mmlab/workspace/C++/Assignment_2/CMakeFiles/BG.dir

@@ -1,0 +1,338 @@
+
+LABORATORY NOTES
+
+1 Lab section:
+
+ 1.1 Summary: open and show an image
+
+ 1.2 Code:
+
+	#include <opencv2/opencv.hpp>
+	#include <opencv2/highgui.hpp>
+
+	using namespace cv;
+
+	int main(){
+	// set matrix variable for the image
+   	Mat image;
+	//load the image (0 = gray scale)
+    	image = imread("Google.jpg",1);
+
+    	imshow("Image window",image);
+	// wait until the user press a key
+    	waitKey(0);
+
+    	return 0;
+	}
+
+	Comments:
+
+	   highgui library:
+		module that contains the functions for
+		input and output operations
+	   using namespace cv:
+		all the OpenCV classes and functions are
+		placed into the cv namespace. Or we add the
+		namespace or we add each time cv:: before
+		the variables
+
+	   cv::Mat imread(const cv::String &filename, int flags = 1)
+		load an image. If the image cannot be read, the
+		function returns an empty matrix (NULL)
+
+	   void imshow(const cv::String &winname, cv::InputArray mat)
+		displays an image in the specified window. displays
+		an image in the specified window
+
+	   int cv::waitKey(int delay = 0)
+		It waits for a key event infinitely (when = 0) or
+		for delay milliseconds, when it is positive.
+
+	   to stop video with key -> if( waitKey(1) == 27 ) break;
+	   instead of waitKey(1)
+
+	Second example from documentation
+
+	#include <opencv2/core.hpp>
+	#include <opencv2/imgcodecs.hpp>
+	#include <opencv2/highgui.hpp>
+	#include <iostream>
+	using namespace cv;
+	using namespace std;
+	int main( int argc, char** argv )
+	{
+	    String imageName( "HappyFish.jpg" ); // by default
+	    if( argc > 1)
+	    {
+		imageName = argv[1];
+	    }
+	    Mat image;
+	    image = imread( samples::findFile(imageName),IMREAD_COLOR );
+	    // Read the file
+	    if( image.empty() )
+		// Check for invalid input
+	    {
+		cout <<  "Could not open or find the image" << std::endl ;
+		return -1;
+	    }
+	    namedWindow( "Display window", WINDOW_AUTOSIZE );
+	    // Create a window for display.
+	    imshow( "Display window", image );
+		// Show our image inside it.
+	    waitKey(0);
+		// Wait for a keystroke in the window
+	    return 0;
+	}
+
+2 Lab section:
+
+ 2.1 Summary: main_video -> open and show a video or the webcam
+	      main_diff_N -> show the video with the
+			     background subtraction [delta with N prev frame]
+	      main_diff_N_tresh -> show the video with the background
+				   subtraction + threshold
+
+ 2.2 Code: main_video
+
+	#include <opencv2/opencv.hpp>  //openCV library
+	#include <opencv2/highgui.hpp> //user interface library
+
+	using namespace cv;
+
+	int main(){
+	    // how to display a video:
+	    // video capture 
+	    VideoCapture cap("Video.mp4");
+	    // VideoCapture cap(0); // to read the web cam
+
+	    Mat frame;
+
+	    // if the video is not opened
+	    if (!cap.isOpened()){
+		return 0;
+	    }
+
+	    for (int i=0; i < 1000; i++){ //1000 frames
+		cap >> frame; // put the capture into the frame
+
+		imshow("frame",frame); // display the frame
+		waitKey(1);// how much to wait between two frame
+
+	    }
+
+	    return 0;
+	}
+
+	Comments:
+
+	   VideoCapture
+		Class for video capturing from video files,
+		image sequences or cameras.
+
+	   Mat (datatype)
+		n-dimensional dense numerical single-channel or
+		multi-channel array
+
+	   cap >> frame
+		N.B. put the picture in frame -> Mat with 3 channels (RGB)
+
+	   waitKey(x)
+		if x=0 -> infinitely long wait (key event)
+		if x>0 -> wait for x milliseconds
+
+ 2.3 Code: main_diff_N
+
+	#include <opencv2/opencv.hpp>  //openCV library
+	#include <opencv2/highgui.hpp> //user interface library
+
+	using namespace cv;
+
+	int main(){
+	    // out to display a video
+	    //video capture 
+	    VideoCapture cap("Video.mp4");
+	    // VideoCapture cap(0); // to read the web cam
+
+	    Mat frame;
+	    Mat frame_gray;
+	    Mat* frames = new Mat[1000]; // memory allocation
+	    Mat motion_mask;
+	    int N = 15; // delay to obtain a nice frame from the webcam
+
+	    // if the video is not open
+	    if (!cap.isOpened()){
+		return 0;
+	    }
+
+	    for (int i=0; i < 1000; i++){ //1000 frames
+
+		cap >> frame; // put the capture into the frame
+
+		cvtColor(frame,frame_gray, COLOR_RGB2GRAY);
+		//convert in gray scale image, 3^ integer: which conversion
+
+		if (i > N){ // we cannot do it for the first N frames
+
+		// frame_gray = frame_gray - prev_frame;
+		absdiff(frame_gray,frames[i-N],motion_mask);
+		// asbsolute difference between frames, 3^ where to store
+		
+		imshow("motion_mask",motion_mask); // display the motion_mask
+		}
+
+		frame_gray.copyTo(frames[i]);
+		//store inside the previous frame
+
+		imshow("frame",frame);
+		waitKey(1);// how much to wait between two frame
+
+	    }
+
+	    delete[]frames;
+
+	    return 0;
+	}
+
+	Comments:
+
+	   cvtColor(InputArray src, OutputArray dst, int code)
+		Converts an image from one color space to another.
+		'code' can be selected writing: COLOR_XXX2XXX
+
+	   absdiff(InputArray src1, InputArray src2, OutputArray dst)
+		Calculates the per-element absolute difference between two
+		arrays or between an array and a scalar [negative final
+		values are abs() -> all positive]
+
+	   X.copyTo(Y)
+		IMPORTANT example:
+		Mat C = A; // C is a shallow copy of A (rows, cols copied,
+						 but shared pixel-pointer)
+		Mat D; A.copyTo(D); // D is a deep copy of A, like B
+
+	   delete[]X
+		free the allocated memory at the end (like free() in C)
+
+ 2.4 Code: main_diff_N_thres (the same as above +...)
+
+		threshold(motion_mask,motion_mask_T,50,255,THRESH_BINARY);
+		//50 = threshold if>50 -> 255, if <50 -> 0
+	
+	Comments:
+
+	   threshold(InputArray src, OutputArray dst, double thresh,
+					    double maxval, int type)
+		Threshold of a Matrix src is saved in Matrix dst.
+		The value are ceiled to maxval if they are larger than
+		thresh. The type of threshold is specified in type (ex
+		THRESH_BINARY, THRESH_TRUNC, THRESH_TOZERO)
+
+3 Lab section:
+
+ 3.1 Summary: AdaptiveBG background that has an updating coefficient
+	      alpha in order to restore it after 1/alpha frames
+
+ 3.2 Code: main_video
+
+	#include <opencv2/opencv.hpp>  //openCV library
+	#include <opencv2/highgui.hpp> //user interface library
+
+	using namespace cv;
+
+	int main(){
+	    // out to display a video
+	    // video capture 
+	    VideoCapture cap(0);
+	    // VideoCapture cap(0); // to read the web cam
+
+	    Mat frame;
+	    Mat frame_gray;
+	    Mat bg_prev, bg_update, motion_mask;
+	    float alpha = 0.1;
+
+	    // if the video is not open
+	    if (!cap.isOpened()){
+		return 0;
+	    }
+
+	    for (int i=0; i < 1000; i++){
+
+		cap >> frame;
+
+		cvtColor(frame,frame_gray, COLOR_RGB2GRAY);
+
+		if (i > 5){
+		    // bg updating
+		    bg_update = bg_prev*(1.0-alpha) + alpha*frame_gray;
+		    absdiff(frame_gray,bg_update,motion_mask);
+		    imshow("motion_mask",motion_mask);
+		    imshow("bg",bg_update);
+		    bg_update.copyTo(bg_prev);
+		} else if(i==5){
+		    // bg first store
+		    frame_gray.copyTo(bg_prev);
+		}
+
+		waitKey(1);
+
+	    }
+
+	    return 0;
+	}
+
+4 Lab section:
+
+ 4.1 Summary: MOG model (Mixuture of Gaussian) to classify
+	      each pixel -> background or foreground
+
+ 4.2 Code: 
+
+	#include...
+
+	Comments:
+	   bla bla
+		description
+
+5 Lab section:
+
+ 5.1 Summary: GFF+LK (Good feature to track + Lukas Kanade)
+	      application
+
+ 5.2 Code: 
+
+	#include...
+
+	Comments:
+	   bla bla
+		description
+
+6 Lab section:
+
+ 6.1 Summary: Kalman filter to track the position of the mouse
+
+ 6.2 Code: 
+
+	#include...
+
+	Comments:
+	   bla bla
+		description
+
+7 Lab section:
+
+ 7.1 Summary: meanshift and camshift algorithm to track a
+	      selected portion
+
+ 7.2 Code: 
+
+	#include...
+
+	Comments:
+	   bla bla
+		description
+
+
+
+
+
+

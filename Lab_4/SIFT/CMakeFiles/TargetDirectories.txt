@@ -1,0 +1,3 @@
+/home/mmlab/workspace/C++/Lab_4/SIFT/CMakeFiles/rebuild_cache.dir
+/home/mmlab/workspace/C++/Lab_4/SIFT/CMakeFiles/SIFT.dir
+/home/mmlab/workspace/C++/Lab_4/SIFT/CMakeFiles/edit_cache.dir

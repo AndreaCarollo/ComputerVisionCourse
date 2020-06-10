@@ -1,0 +1,3 @@
+/home/mmlab/workspace/C++/Ass2/sample/CMakeFiles/rebuild_cache.dir
+/home/mmlab/workspace/C++/Ass2/sample/CMakeFiles/sample.dir
+/home/mmlab/workspace/C++/Ass2/sample/CMakeFiles/edit_cache.dir

@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/andrea/Documents/ComputerVision/Ass2/A1_code/Hungarian.cpp
+stdlib.h
+-
+cfloat
+-
+cmath
+-
+Hungarian.h
+/home/andrea/Documents/ComputerVision/Ass2/A1_code/Hungarian.h
+
+/home/andrea/Documents/ComputerVision/Ass2/A1_code/Hungarian.h
+iostream
+-
+vector
+-
+
